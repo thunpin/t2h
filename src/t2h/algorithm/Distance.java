@@ -2,7 +2,7 @@ package t2h.algorithm;
 
 import java.util.List;
 
-import t2h.repository.Information;
+import t2h.repository.Element;
 import t2h.repository.Repository;
 
 /**
@@ -16,15 +16,21 @@ public class Distance {
 	private static final int FULL_CIRCUFERENCE = 360;
 	private static final int MAX_DIF_NUMBER = 180;
 
-	public float calculate(final String type, final String value, final float currentPoint) {
-		final List<Information> elements = Repository.get().getInformations().get(type).get(value);
+	/**
+	 * 
+	 * @param value
+	 * @param currentPoint
+	 * @return
+	 */
+	public float calculate(final String value, final float currentPoint) {
+		final List<Element> elements = Repository.get().getElements().get(value);
 		
 		float distance = 0;
 		long count = 0;
 		
 		
-		for (Information element : elements) {
-			float elementDistance = Long.parseLong(element.getValue()); 
+		for (Element element : elements) {
+			float elementDistance = element.getAngle(); 
 			float calculated = currentPoint - elementDistance;
 			if (calculated < 0) {
 				calculated *= -1;
