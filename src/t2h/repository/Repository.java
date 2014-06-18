@@ -18,10 +18,16 @@ public class Repository {
 	private final Map<String, Long> informationsCount;
 	private final Map<Set<Information>, Long> relationshipsCount;
 	
-	public Repository() {
+	private final static Repository instance = new Repository();
+	
+	private Repository() {
 		informations = new HashMap<>();
 		informationsCount = new HashMap<>();
 		relationshipsCount = new HashMap<>();
+	}
+	
+	public static Repository get() {
+		return instance;
 	}
 
 	/**
