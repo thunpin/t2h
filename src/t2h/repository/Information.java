@@ -10,13 +10,13 @@ public class Information {
 	private final long date;
 	private final String name;
 	private final String value;
-	private final boolean continuos;
+	private final String type;
 	
-	public Information(final long date, final String name, final String value, boolean continuos) {
+	public Information(final long date, final String name, final String value, String type) {
 		this.date = date;
 		this.name = name;
 		this.value = value;
-		this.continuos = continuos;
+		this.type = type;
 	}
 	
 	/*
@@ -39,7 +39,8 @@ public class Information {
 		
 		if (obj instanceof Information) {
 			final Information info = (Information)obj;
-			result = date == info.date && name.equals(info.name) && value.equals(info.value);
+			result = name.equals(info.name) && 
+					value.equals(info.value);
 		} else {
 			result = false;
 		}
@@ -58,7 +59,7 @@ public class Information {
 	public String getValue() {
 		return value;
 	}
-	public boolean isContinuos() {
-		return continuos;
+	public String getType() {
+		return type;
 	}
 }
