@@ -1,15 +1,22 @@
 package t2h;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import t2h.algorithm.Distance;
+import t2h.algorithm.Probability;
+import t2h.algorithm.ProbabilityResult;
 import t2h.repository.Element;
 import t2h.repository.Repository;
 import t2h.repository.Tag;
 
 public class T2H {
+	private static final int NUMBER_OF_RESULTS = 3;
 	private static final String MONTH_TAG = "month";
 	private static final String WEEK_TAG = "week";
 	private static final int HOUR_ANGLE_VALUE = 15;
@@ -50,11 +57,41 @@ public class T2H {
 	
 	/**
 	 * 
-	 * @param tag
+	 * @param tags context elements
 	 * @return elements ordered by relevance
 	 */
-	public List<T2hResult> request(Tag ...tag) {
-		Repository.get().getElements();
-		return null;
+	public List<T2hResult> request(Set<Tag> tags) {
+		
+		
+		final Calendar calendar = Calendar.getInstance();
+		final long date = calendar.getTimeInMillis();
+		final int hour = calendar.get(Calendar.HOUR);
+		final int minute = calendar.get(Calendar.MINUTE);
+		final float currentPoint = hour * HOUR_ANGLE_VALUE + HOUR_ANGLE_VALUE / minute;
+				
+		
+		final Distance distance = new Distance();
+		final Probability probability = new Probability();
+		
+		final Collection<String> values = Repository.get().getElements().keySet();
+		final List<T2hResult> results = new ArrayList<>();
+		
+		for (final String value : values) {
+			final float distanceResult = distance.calculate(value, currentPoint);
+			final ProbabilityResult probabilityResult = probability.calculate(value, tags);
+			
+			final float score = (
+						distanceResult + 
+						probabilityResult.getDependent() + 
+						probabilityResult.getIndependent()
+					) / NUMBER_OF_RESULTS;
+			
+			final T2hResult result = new T2hResult(value, score, date);
+			results.add(result);
+		}
+		
+		Collections.sort(results);
+		
+		return results;
 	}
 }
