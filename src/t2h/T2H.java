@@ -16,11 +16,14 @@ import t2h.repository.Repository;
 import t2h.repository.Tag;
 
 public class T2H {
-	private static final int NUMBER_OF_RESULTS = 3;
+	private static final int NUMBERS_OF_RESULT = 3;
 	private static final String MONTH_TAG = "month";
 	private static final String WEEK_TAG = "week";
 	private static final int HOUR_ANGLE_VALUE = 15;
 	private final static T2H instance = new T2H();
+	
+	private T2H() {
+	}
 	
 	/**
 	 * singletton pattern
@@ -41,18 +44,31 @@ public class T2H {
 		final Calendar calendar = Calendar.getInstance();
 		final int hour = calendar.get(Calendar.HOUR_OF_DAY);
 		final int minute = calendar.get(Calendar.MINUTE);
+		final Set<Tag> tags = createTimeTags(calendar);
+		
+		final float angle = hour * HOUR_ANGLE_VALUE + HOUR_ANGLE_VALUE / minute;
+		final Element element = new Element(value, angle, date, tags);
+		Repository.get().add(element);
+	}
+
+	/**
+	 * create time tags
+	 * 
+	 * @param calendar
+	 * @return time tags
+	 */
+	public Set<Tag> createTimeTags(final Calendar calendar) {
 		final Integer week = calendar.get(Calendar.WEEK_OF_MONTH);
 		final Integer month = calendar.get(Calendar.MONTH);
 		
 		final Tag weekTag = new Tag(WEEK_TAG, week.toString());
 		final Tag monthTag = new Tag(MONTH_TAG, month.toString());
 		
-		final float angle = hour * HOUR_ANGLE_VALUE + HOUR_ANGLE_VALUE / minute;
+		
 		final Set<Tag> tags = new HashSet<>();
 		tags.add(weekTag);
 		tags.add(monthTag);
-		final Element element = new Element(value, angle, date, tags);
-		Repository.get().add(element);
+		return tags;
 	}
 	
 	/**
@@ -61,14 +77,11 @@ public class T2H {
 	 * @return elements ordered by relevance
 	 */
 	public List<T2hResult> request(Set<Tag> tags) {
-		
-		
 		final Calendar calendar = Calendar.getInstance();
 		final long date = calendar.getTimeInMillis();
 		final int hour = calendar.get(Calendar.HOUR);
 		final int minute = calendar.get(Calendar.MINUTE);
 		final float currentPoint = hour * HOUR_ANGLE_VALUE + HOUR_ANGLE_VALUE / minute;
-				
 		
 		final Distance distance = new Distance();
 		final Probability probability = new Probability();
@@ -84,7 +97,7 @@ public class T2H {
 						distanceResult + 
 						probabilityResult.getDependent() + 
 						probabilityResult.getIndependent()
-					) / NUMBER_OF_RESULTS;
+					) / NUMBERS_OF_RESULT;
 			
 			final T2hResult result = new T2hResult(value, score, date);
 			results.add(result);
