@@ -50,9 +50,7 @@ public class Main {
 				T2H.get().add(value, date);
 			}
 			
-			System.out.println(total);
-			System.out.println(optimunResultHit);
-			System.out.println(t2hResultHit);
+			System.out.print(total + "," + optimunResultHit + "," + t2hResultHit);
 			
 			reader.close();
 		}
